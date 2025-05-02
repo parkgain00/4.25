@@ -151,17 +151,6 @@ const LoadingContainer = styled.div`
   margin: 2rem auto;
 `;
 
-const LoadingBar = styled.div`
-  height: 4px;
-  background-color: #c3142d;
-  width: 0;
-  max-width: 800px;
-  margin: 0 auto;
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(195, 20, 45, 0.5);
-  animation: ${lineGrow} 3s ease-in-out infinite;
-`;
-
 export default function Home() {
   const [activeSection, setActiveSection] = useState('form');
   const [score, setScore] = useState(0);
@@ -199,6 +188,39 @@ export default function Home() {
       document.head.appendChild(style);
     }
   }, []);
+
+  useEffect(() => {
+    // p5.js 로드 및 초기화
+    if (typeof window !== 'undefined' && activeSection === 'loading') {
+      // p5.js가 이미 로드되어 있는지 확인
+      if (!window.p5) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js';
+        script.async = true;
+        script.onload = () => {
+          const sketchScript = document.createElement('script');
+          sketchScript.src = '/mySketch.js';
+          sketchScript.async = true;
+          document.body.appendChild(sketchScript);
+        };
+        document.body.appendChild(script);
+      } else {
+        // p5.js가 이미 로드되어 있다면 스케치만 로드
+        const sketchScript = document.createElement('script');
+        sketchScript.src = '/mySketch.js';
+        sketchScript.async = true;
+        document.body.appendChild(sketchScript);
+      }
+      
+      return () => {
+        // Clean up p5 instance when unmounting
+        document.querySelectorAll('script[src="/mySketch.js"]')
+          .forEach(el => el.remove());
+        document.querySelectorAll('canvas')
+          .forEach(el => el.remove());
+      };
+    }
+  }, [activeSection]);
 
   function calculate() {
     // 이름 값은 DOM에서 직접 가져옴
@@ -258,7 +280,7 @@ export default function Home() {
       const personalityB = getPersonalityAnalysis(elemB);
       setPersonalityA(personalityA);
       setPersonalityB(personalityB);
-
+      
       // 궁합 메시지 생성
       const baseMessage = getCompatibilityMessage(compatibilityScore);
       setMessage(baseMessage);
@@ -714,7 +736,7 @@ export default function Home() {
       {/* 로딩 화면 */}
       <div id="loadingSection" className={`loading-section ${activeSection === 'loading' ? 'active' : ''}`}>
         <LoadingContainer>
-          <LoadingBar />
+          <div id="p5Canvas" style={{ width: '100%', height: '400px' }}></div>
         </LoadingContainer>
       </div>
 
