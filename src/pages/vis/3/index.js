@@ -176,16 +176,22 @@ export default function Visualisation() {
       </Head>
 
       <CanvasWrapper ref={canvasRef}>
-        {status && <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '5px', backgroundColor: 'rgba(0,0,0,0.5)', color: 'white' }}>{status}</div>}
+        {status && <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '5px', backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}>{status}</div>}
       </CanvasWrapper>
 
       <Script
-        src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"
-        strategy="afterInteractive"
+        src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"
+        strategy="beforeInteractive"
         onLoad={() => {
           console.log("p5.js loaded");
           if (canvasRef.current) {
-            initSketch();
+            try {
+              initSketch();
+              console.log("Sketch initialized successfully");
+            } catch (error) {
+              console.error("Error initializing sketch:", error);
+              setStatus('Error initializing: ' + error.message);
+            }
           }
         }}
         onError={(e) => {
