@@ -15,7 +15,20 @@ const PersonInput = ({
   setHour, 
   minute, 
   setMinute,
-  isSimple
+  isSimple,
+  className,
+  nameInputRef,
+  onNameBlur,
+  yearInputRef,
+  onYearBlur,
+  monthInputRef,
+  onMonthBlur,
+  dayInputRef,
+  onDayBlur,
+  hourInputRef,
+  onHourBlur,
+  minuteInputRef,
+  onMinuteBlur
 }) => {
   // 월이 변경되었을 때 일 값이 해당 월의 최대 일수를 초과하는지 체크
   const handleMonthChange = (e) => {
@@ -40,16 +53,18 @@ const PersonInput = ({
   };
 
   return (
-    <div className="person-input">
-      <h3>{label} 정보</h3>
+    <div className={`person-input ${className || ''}`}>
+      <h3>{label} 연인</h3>
       <div className="input-group">
         <label>이름</label>
         <input 
           type="text" 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
-          placeholder="이름을 입력하세요"
+          ref={nameInputRef}
+          onBlur={onNameBlur}
         />
+        <div className="underline" />
       </div>
       <div className="input-group">
         <label>생년</label>
@@ -59,7 +74,10 @@ const PersonInput = ({
           onChange={handleYearChange} 
           min="1920" 
           max="2025" 
+          ref={yearInputRef}
+          onBlur={onYearBlur}
         />
+        <div className="underline" />
       </div>
       <div className="input-group">
         <label>생월</label>
@@ -69,7 +87,10 @@ const PersonInput = ({
           onChange={handleMonthChange} 
           min="1" 
           max="12" 
+          ref={monthInputRef}
+          onBlur={onMonthBlur}
         />
+        <div className="underline" />
       </div>
       <div className="input-group">
         <label>생일</label>
@@ -79,7 +100,10 @@ const PersonInput = ({
           onChange={(e) => setDay(parseInt(e.target.value, 10))} 
           min="1" 
           max={getMaxDaysInMonth(month, year)} 
+          ref={dayInputRef}
+          onBlur={onDayBlur}
         />
+        <div className="underline" />
       </div>
       {!isSimple && (
         <>
@@ -91,7 +115,10 @@ const PersonInput = ({
               onChange={(e) => setHour(parseInt(e.target.value, 10))} 
               min="0" 
               max="23" 
+              ref={hourInputRef}
+              onBlur={onHourBlur}
             />
+            <div className="underline" />
           </div>
           <div className="input-group">
             <label>태어난 분</label>
@@ -101,10 +128,24 @@ const PersonInput = ({
               onChange={(e) => setMinute(parseInt(e.target.value, 10))} 
               min="0" 
               max="59" 
+              ref={minuteInputRef}
+              onBlur={onMinuteBlur}
             />
+            <div className="underline" />
           </div>
         </>
       )}
+      {/** 스타일 추가: number input의 스핀 버튼 숨기기 */}
+      <style jsx>{`
+        input[type='number']::-webkit-outer-spin-button,
+        input[type='number']::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type='number'] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
     </div>
   );
 };
